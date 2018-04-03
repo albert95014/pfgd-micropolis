@@ -30,6 +30,7 @@ class MapScanner extends TileBehavior
 
 	public static enum B
 	{
+		PARK,
 		RESIDENTIAL,
 		HOSPITAL_CHURCH,
 		COMMERCIAL,
@@ -48,6 +49,9 @@ class MapScanner extends TileBehavior
 	public void apply()
 	{
 		switch (behavior) {
+		case PARK:
+			doPark();
+			return;
 		case RESIDENTIAL:
 			doResidential();
 			return;
@@ -250,6 +254,26 @@ class MapScanner extends TileBehavior
 		}
 
 		city.policeMap[ypos/8][xpos/8] += z;
+	}
+	
+//doParks() function used for giving parks the power to reduce pollution	
+	void doPark()
+	{
+		city.pollutionMem[ypos/2][xpos/2] -= 30;
+		
+//		city.policeCount++;
+//		if ((city.cityTime % 8) == 0) {
+//			repairZone(POLICESTATION, 3);
+//		}
+//
+//		int z;
+//		if (powerOn) {
+//			z = city.policeEffect;
+//		} else {
+//			z = city.policeEffect / 2;
+//		}
+//
+//		city.greenMap[ypos/2][xpos/2] += z;
 	}
 
 	void doStadiumEmpty()

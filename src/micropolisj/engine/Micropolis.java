@@ -86,6 +86,10 @@ public class Micropolis
 	public int [][] fireRate;       //firestations reach- used for overlay graphs
 	int [][] policeMap;      //police stations- cleared and rebuilt each sim cycle
 	public int [][] policeMapEffect;//police stations reach- used for overlay graphs
+	
+	/**attempt to make pollution overlay**/
+	int [][] greenMap;      //green areas- cleared and rebuilt each sim cycle
+	public int [][] greenMapEffect;//green areas reach- used for overlay graphs
 
 	/** For each 8x8 section of city, this is an integer between 0 and 64,
 	 * with higher numbers being closer to the center of the city. */
@@ -244,6 +248,8 @@ public class Micropolis
 		fireStMap = new int[smY][smX];
 		policeMap = new int[smY][smX];
 		policeMapEffect = new int[smY][smX];
+		greenMap = new int[smY][smX];
+		greenMapEffect = new int[smY][smX];
 		fireRate = new int[smY][smX];
 		comRate = new int[smY][smX];
 
@@ -544,6 +550,7 @@ public class Micropolis
 			for (int x = 0; x < fireStMap[y].length; x++) {
 				fireStMap[y][x] = 0;
 				policeMap[y][x] = 0;
+				greenMap[y][x] = 0;
 			}
 		}
 	}
@@ -856,9 +863,10 @@ public class Micropolis
 					int z = 128 - val + popDensity[hy][hx];
 					z = Math.min(300, z);
 					z -= policeMap[hy/4][hx/4];
+					//z += 250; testing policeMap (makes crime actually insane)
 					z = Math.min(250, z);
 					z = Math.max(0, z);
-					crimeMem[hy][hx] = z;
+					crimeMem[hy][hx] = z; /**array of crime values for each tile**/
 
 					sum += z;
 					if (z > cmax || (z == cmax && PRNG.nextInt(4) == 0)) {
@@ -1151,7 +1159,7 @@ public class Micropolis
 			for (int y = 0; y < HWLDY; y++)
 			{
 				int plevel = 0;
-				int lvflag = 0;
+				int lvflag = 0; /**lv = landvalue**/
 				int zx = 2*x;
 				int zy = 2*y;
 
@@ -1181,7 +1189,7 @@ public class Micropolis
 				if (plevel > 255)
 					plevel = 255;
 
-				tem[y][x] = plevel;
+				tem[y][x] = plevel; /**pollution level?**/
 
 				if (lvflag != 0)
 				{
@@ -1223,6 +1231,9 @@ public class Micropolis
 			for (int y = 0; y < HWLDY; y++)
 			{
 				int z = tem[y][x];
+				/**affect pollution levels based on trees starting HERE**/
+//				z -= greenMap[x/4][y/4];
+				
 				pollutionMem[y][x] = z;
 
 				if (z != 0)
@@ -1467,6 +1478,7 @@ public class Micropolis
 		bb.put("STADIUM_FULL", new MapScanner(this, MapScanner.B.STADIUM_FULL));
 		bb.put("AIRPORT", new MapScanner(this, MapScanner.B.AIRPORT));
 		bb.put("SEAPORT", new MapScanner(this, MapScanner.B.SEAPORT));
+		bb.put("PARK", new MapScanner(this, MapScanner.B.PARK));
 
 		this.tileBehaviors = bb;
 	}
