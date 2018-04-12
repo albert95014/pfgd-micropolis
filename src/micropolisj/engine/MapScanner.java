@@ -259,21 +259,11 @@ class MapScanner extends TileBehavior
 //doParks() function used for giving parks the power to reduce pollution	
 	void doPark()
 	{
-		city.pollutionMem[ypos/2][xpos/2] -= 30;
+		city.greenCount++;
+		int z;
+		z = city.greenCount/12; //every 12 green tiles, increase z by 1
+		city.greenMap[ypos/2][xpos/2] += z; //greenMap will be used to reduce pollution in ptlScan()
 		
-//		city.policeCount++;
-//		if ((city.cityTime % 8) == 0) {
-//			repairZone(POLICESTATION, 3);
-//		}
-//
-//		int z;
-//		if (powerOn) {
-//			z = city.policeEffect;
-//		} else {
-//			z = city.policeEffect / 2;
-//		}
-//
-//		city.greenMap[ypos/2][xpos/2] += z;
 	}
 
 	void doStadiumEmpty()

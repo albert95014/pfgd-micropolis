@@ -129,6 +129,9 @@ public class Micropolis
 	int nuclearCount;
 	int seaportCount;
 	int airportCount;
+	
+	//count of green tiles
+	int greenCount = 0;
 
 	int totalPop;
 	int lastCityPop;
@@ -235,6 +238,9 @@ public class Micropolis
 		crimeMem = new int[hY][hX];
 		popDensity = new int[hY][hX];
 		trfDensity = new int[hY][hX];
+		//added 4/7/2018
+		greenMap = new int[hY][hX];
+		greenMapEffect = new int[hY][hX];
 
 		int qX = (width+3)/4;
 		int qY = (height+3)/4;
@@ -248,8 +254,6 @@ public class Micropolis
 		fireStMap = new int[smY][smX];
 		policeMap = new int[smY][smX];
 		policeMapEffect = new int[smY][smX];
-		greenMap = new int[smY][smX];
-		greenMapEffect = new int[smY][smX];
 		fireRate = new int[smY][smX];
 		comRate = new int[smY][smX];
 
@@ -544,12 +548,20 @@ public class Micropolis
 		nuclearCount = 0;
 		seaportCount = 0;
 		airportCount = 0;
+		greenCount = 0;
 		powerPlants.clear();
 
 		for (int y = 0; y < fireStMap.length; y++) {
 			for (int x = 0; x < fireStMap[y].length; x++) {
 				fireStMap[y][x] = 0;
 				policeMap[y][x] = 0;
+//				greenMap[y][x] = 0;
+			}
+		}
+		
+		//reset greenMap
+		for (int y = 0; y < greenMap.length - 1; y++) {
+			for (int x = 0; x < greenMap[y].length - 1; x++) {
 				greenMap[y][x] = 0;
 			}
 		}
@@ -1231,10 +1243,10 @@ public class Micropolis
 			for (int y = 0; y < HWLDY; y++)
 			{
 				int z = tem[y][x];
-				/**affect pollution levels based on trees starting HERE**/
-//				z -= greenMap[x/4][y/4];
 				
-				pollutionMem[y][x] = z;
+//affect pollution levels based on trees starting HERE
+				z -= greenMap[y][x]; //greenMap calculated from doPark() in MapScanner
+				pollutionMem[y][x] = z; //pollution of tile is tem[y][x] reduced by greenMap value
 
 				if (z != 0)
 				{
@@ -2230,9 +2242,23 @@ public class Micropolis
 				TileSpec spec = Tiles.get(tilevalue & LOMASK);
 				if (spec != null && spec.animNext != null) {
 					int flags = tilevalue & ALLBITS;
-					setTile(x, y, (char)
-						(spec.animNext.tileNumber | flags)
-						);
+					
+					//making tree tiles into birds if pollutionMem < 0
+					if (spec.tileNumber >= 40 && spec.tileNumber <= 43) { //if tile is player-made park
+						if (pollutionMem[y/2][x/2] <= 0) { //if 2x2 area's pollution is 0
+							Random rand = new Random();
+							int randnumber = rand.nextInt(100);
+							if (randnumber < 3) { //3% chance for the tile to animate
+								setTile(x, y, (char)(spec.animNext.tileNumber | flags));
+							}
+						}
+					} else {
+//					
+//						original code below
+						setTile(x, y, (char)
+							(spec.animNext.tileNumber | flags)
+							);
+					}
 				}
 			}
 		}

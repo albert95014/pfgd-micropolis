@@ -6,6 +6,8 @@
 # it under the terms of the GNU GPLv3, with additional terms.
 # See the README file, included in this distribution, for details.
 
+#graphics/tiles.rc
+
 # DIRT
 0     terrain@0,0                     (noburn)(description=#0)
 1     terrain@0,16                    (noburn)
@@ -1009,3 +1011,12 @@
 957   misc_animation@0,2080
 958   misc_animation@0,2096
 959   misc_animation@0,2112
+# BEGIN WILDLIFE VISUALIZATION #
+960   wildlife_visualization@0,0   (becomes=961)
+961   wildlife_visualization@0,16   (becomes=962)
+962   wildlife_visualization@0,32   (becomes=963)
+963   wildlife_visualization@0,48   (becomes=964)
+964   wildlife_visualization@0,64   (becomes=965)
+965   wildlife_visualization@0,80   (becomes=966)
+966   wildlife_visualization@0,96   (becomes=967)
+967   wildlife_visualization@0,112   (becomes=960)
